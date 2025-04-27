@@ -1,0 +1,9 @@
+[console_scripts]
+camre = rknn_yolo.camre:main
+crossroad_detector = rknn_yolo.crossroad_detector:main
+motor = rknn_yolo.motor:main
+opencv_pid = rknn_yolo.opencv_pid:main
+opencv_pid_1 = rknn_yolo.opencv_pid_1:main
+rknn_yolo = rknn_yolo.main:main
+targer = rknn_yolo.targer:main
+
