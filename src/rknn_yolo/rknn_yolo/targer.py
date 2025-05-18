@@ -6,7 +6,7 @@ class WardPublisherNode(Node):
     def __init__(self):
         super().__init__('targer')
         self.publisher_ = self.create_publisher(Int8MultiArray, '/target_wards', 10)
-        self.target_wards = [5,8]  # 静态配置，可改为动态输入
+        self.target_wards = [6,8]  # 静态配置，可改为动态输入
         self.timer = self.create_timer(1.0, self.publish_wards)  # 每秒发布
         self.get_logger().info('病房发布节点已启动')
 

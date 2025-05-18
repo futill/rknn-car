@@ -22,7 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
             'crossroad_detector = rknn_yolo.crossroad_detector:main',
-            'opencv_pid_1 = rknn_yolo.opencv_pid_1:main',
+            'line_following_node = rknn_yolo.line_following_node:main',
             'rknn_yolo = rknn_yolo.main:main',
             'camre = rknn_yolo.camre:main',
             'opencv_pid = rknn_yolo.opencv_pid:main',

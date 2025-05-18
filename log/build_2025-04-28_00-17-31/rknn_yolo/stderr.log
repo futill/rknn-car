@@ -1,0 +1,5 @@
+  File "/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo/lib/handle_logic.py", line 87
+    self.node pid = PIDController(kp=0.26, ki=0.0, kd=0.1)
+              ^^^
+SyntaxError: invalid syntax
+

@@ -1,0 +1,28 @@
+running egg_info
+writing ../../build/rknn_yolo/rknn_yolo.egg-info/PKG-INFO
+writing dependency_links to ../../build/rknn_yolo/rknn_yolo.egg-info/dependency_links.txt
+writing entry points to ../../build/rknn_yolo/rknn_yolo.egg-info/entry_points.txt
+writing requirements to ../../build/rknn_yolo/rknn_yolo.egg-info/requires.txt
+writing top-level names to ../../build/rknn_yolo/rknn_yolo.egg-info/top_level.txt
+reading manifest file '../../build/rknn_yolo/rknn_yolo.egg-info/SOURCES.txt'
+writing manifest file '../../build/rknn_yolo/rknn_yolo.egg-info/SOURCES.txt'
+running build
+running build_py
+copying rknn_yolo/lib/pid_controller.py -> /home/orangepi/car_ros2/build/rknn_yolo/build/lib/rknn_yolo/lib
+running install
+running install_lib
+copying /home/orangepi/car_ros2/build/rknn_yolo/build/lib/rknn_yolo/lib/pid_controller.py -> /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo/lib
+byte-compiling /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo/lib/pid_controller.py to pid_controller.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/rknn_yolo/rknn_yolo.egg-info to /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo-0.0.0-py3.10.egg-info
+running install_scripts
+Installing camre script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing crossroad_detector script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing line_following_node script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing motor script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing opencv_pid script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing rknn_yolo script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+Installing targer script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+writing list of installed files to '/home/orangepi/car_ros2/build/rknn_yolo/install.log'

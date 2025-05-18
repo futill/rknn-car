@@ -1,0 +1,30 @@
+[1.010s] Invoking command in '/home/orangepi/car_ros2/src/rknn_yolo': PYTHONPATH=/home/orangepi/car_ros2/build/rknn_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rknn_yolo build --build-base /home/orangepi/car_ros2/build/rknn_yolo/build install --record /home/orangepi/car_ros2/build/rknn_yolo/install.log --single-version-externally-managed install_data
+[1.346s] running egg_info
+[1.347s] writing ../../build/rknn_yolo/rknn_yolo.egg-info/PKG-INFO
+[1.347s] writing dependency_links to ../../build/rknn_yolo/rknn_yolo.egg-info/dependency_links.txt
+[1.347s] writing entry points to ../../build/rknn_yolo/rknn_yolo.egg-info/entry_points.txt
+[1.348s] writing requirements to ../../build/rknn_yolo/rknn_yolo.egg-info/requires.txt
+[1.348s] writing top-level names to ../../build/rknn_yolo/rknn_yolo.egg-info/top_level.txt
+[1.350s] reading manifest file '../../build/rknn_yolo/rknn_yolo.egg-info/SOURCES.txt'
+[1.352s] writing manifest file '../../build/rknn_yolo/rknn_yolo.egg-info/SOURCES.txt'
+[1.352s] running build
+[1.352s] running build_py
+[1.353s] copying rknn_yolo/line_following_node.py -> /home/orangepi/car_ros2/build/rknn_yolo/build/lib/rknn_yolo
+[1.353s] running install
+[1.354s] running install_lib
+[1.355s] copying /home/orangepi/car_ros2/build/rknn_yolo/build/lib/rknn_yolo/line_following_node.py -> /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo
+[1.356s] byte-compiling /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo/line_following_node.py to line_following_node.cpython-310.pyc
+[1.358s] running install_data
+[1.358s] running install_egg_info
+[1.361s] removing '/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo-0.0.0-py3.10.egg-info' (and everything under it)
+[1.361s] Copying ../../build/rknn_yolo/rknn_yolo.egg-info to /home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo-0.0.0-py3.10.egg-info
+[1.362s] running install_scripts
+[1.396s] Installing camre script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.397s] Installing crossroad_detector script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.398s] Installing line_following_node script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.399s] Installing motor script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.399s] Installing opencv_pid script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.400s] Installing rknn_yolo script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.400s] Installing targer script to /home/orangepi/car_ros2/install/rknn_yolo/lib/rknn_yolo
+[1.401s] writing list of installed files to '/home/orangepi/car_ros2/build/rknn_yolo/install.log'
+[1.487s] Invoked command in '/home/orangepi/car_ros2/src/rknn_yolo' returned '0': PYTHONPATH=/home/orangepi/car_ros2/build/rknn_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rknn_yolo build --build-base /home/orangepi/car_ros2/build/rknn_yolo/build install --record /home/orangepi/car_ros2/build/rknn_yolo/install.log --single-version-externally-managed install_data

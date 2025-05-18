@@ -23,8 +23,8 @@ def generate_launch_description():
         # ),
         Node(
             package='rknn_yolo',
-            executable='opencv_pid_1',
-            name='opencv_pid_1',
+            executable='line_following_node',
+            name='line_following_node',
             output='screen'
         ),
         Node(
