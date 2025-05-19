@@ -15,7 +15,7 @@ class LineFollowingNode(Node):
     def __init__(self):
         super().__init__('line_following_node')
         self.bridge = CvBridge()
-        self.pid = PIDController(kp=0.50, ki=0.0, kd=0.03)
+        self.pid = PIDController(kp=0.50, ki=0.0, kd=0.02)
         self.motion = MotionController(self)
         self.handler = handle_logic(self)
 
@@ -26,6 +26,7 @@ class LineFollowingNode(Node):
         self.ward_sub = self.create_subscription(Int8MultiArray, '/target_wards', self.motion.update_target_wards, 10)
         self.cmd_vel_pub = self.create_publisher(Float32MultiArray, '/cmd_vel', 10)
         self.reset = self.create_publisher(Int8, '/reset', 10)
+        self.led = self.create_publisher(Int8, '/led', 10)
 
         self.get_logger().info('线跟踪节点已启动')
 
@@ -38,7 +39,7 @@ class LineFollowingNode(Node):
 
         line_center, center_y, binary, bounding_box = process_image(frame, self.motion.turning, self.motion.turn_direction)
 
-        self.get_logger().info(f'当前状态: {self.motion.state}, 路口ID: {self.motion.current_crossroad_id}, 目标病房: {self.motion.target_wards}, 当前病房索引: {self.motion.current_ward_index}')
+        #self.get_logger().info(f'当前状态: {self.motion.state}, 路口ID: {self.motion.current_crossroad_id}, 目标病房: {self.motion.target_wards}, 当前病房索引: {self.motion.current_ward_index}')
 
         if self.motion.waiting_for_direction:
             elapsed_time = time.time() - self.motion.direction_check_start_time

@@ -1,0 +1,5 @@
+  File "/home/orangepi/car_ros2/install/rknn_yolo/lib/python3.10/site-packages/rknn_yolo/lib/handle_logic.py", line 472
+    else :
+    ^^^^
+SyntaxError: invalid syntax
+

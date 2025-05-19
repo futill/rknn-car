@@ -9,13 +9,14 @@ class MotionController:
         self.BASE_SPEED = 90.0
         self.MAX_SPEED = 120.0
         self.MAX_LINE_LOST = 2
-        self.UNLOAD_TIME = 1.0
+        self.UNLOAD_TIME = 2.0
         self.TURN_TIME = 0.85
         self.TURN_AROUND_TIME = 1
         self.CENTER_THRESHOLD = 50
         self.WAIT_AT_CROSSROAD_TIME = 0.0
         self.STRAIGHT_WAIT_TIME = 0.5
         self.DIRECTION_CHECK_DELAY = 0.17
+        self.double_target = 1
 
         self.STATES = {
             'WAITING': 1,
@@ -108,12 +109,14 @@ class MotionController:
     def update_target_wards(self, msg):
         self.target_wards = list(msg.data)
         self.node.get_logger().info(f'更新目标病房: {self.target_wards}')
+        self.publish_led(1)
         if self.state == self.STATES['WAITING'] and self.mode == 2:
             self.state = self.STATES['TO_WARD']
             self.start_time = time.time()
             self.last_crossroad_id = 0
             self.current_ward_index = 0
             self.node.get_logger().info(f'开始送药，目标病房: {self.target_wards}')
+
 
     def perform_turn(self, line_center, pid_controller):
         #left_speed = right_speed = 0.0
@@ -167,3 +170,8 @@ class MotionController:
         msg = Int8()
         msg.data = 0
         self.node.reset.publish(msg)
+
+    def publish_led(self,led):
+        msg = Int8()
+        msg.data = led
+        self.node.led.publish(msg)

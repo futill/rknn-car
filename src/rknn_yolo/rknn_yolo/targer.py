@@ -1,20 +1,41 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int8MultiArray
+import serial
 
 class WardPublisherNode(Node):
     def __init__(self):
-        super().__init__('targer')
+        super().__init__('targer')  # 节点名称保持为 'targer'
+        # 初始化串口
+        self.serial_port = serial.Serial(
+            port='/dev/ttyS4',
+            baudrate=9600,
+            timeout=1
+        )
         self.publisher_ = self.create_publisher(Int8MultiArray, '/target_wards', 10)
-        self.target_wards = [8]  # 静态配置，可改为动态输入
-        self.timer = self.create_timer(1.0, self.publish_wards)  # 每秒发布
+        self.target_wards = []  # 动态存储病房号
+        self.timer = self.create_timer(0.1, self.read_and_publish_wards)  # 每 0.1 秒检查串口数据
         self.get_logger().info('病房发布节点已启动')
 
-    def publish_wards(self):
-        msg = Int8MultiArray()
-        msg.data = [int(ward) for ward in self.target_wards]
-        self.publisher_.publish(msg)
-        #self.get_logger().info(f'发布目标病房: {self.target_wards}')
+    def read_and_publish_wards(self):
+        try:
+            # 读取串口数据
+            if self.serial_port.in_waiting >= 4:  # 协议长度为 4 字节
+                data = self.serial_port.read(4)  # 读取 4 字节
+                # 验证协议格式：aa 01 (病房号) bb
+                if len(data) == 4 and data[0] == 0xAA and data[1] == 0x02 and data[3] == 0xBB:
+                    ward_number = data[2]  # 提取病房号（第 3 字节）
+                    self.target_wards = [ward_number]  # 更新病房号列表
+                    # 发布消息
+                    msg = Int8MultiArray()
+                    msg.data = [int(ward) for ward in self.target_wards]
+                    self.publisher_.publish(msg)
+                    self.get_logger().info(f'发布病房号: {ward_number}')
+                    data = []
+                else:
+                    self.get_logger().warn('收到无效的串口数据')
+        except serial.SerialException as e:
+            self.get_logger().error(f'串口错误: {e}')
 
 def main(args=None):
     rclpy.init(args=args)
@@ -23,7 +44,11 @@ def main(args=None):
         rclpy.spin(node)
     except KeyboardInterrupt:
         node.get_logger().info('节点已停止')
+    except Exception as e:
+        node.get_logger().error(f'发生错误: {e}')
     finally:
+        if node.serial_port.is_open:
+            node.serial_port.close()  # 关闭串口
         node.destroy_node()
         rclpy.shutdown()
 

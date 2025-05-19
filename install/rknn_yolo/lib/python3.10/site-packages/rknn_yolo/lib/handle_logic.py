@@ -413,11 +413,12 @@ class handle_logic:
                 self.motion.forcing_straight = False
 
         if self.motion.state == self.motion.STATES['WAITING']:
-            self.get_logger().info('当前状态为 WAITING，停车')
+            #self.get_logger().info('当前状态为 WAITING，停车')
             self.motion.publish_cmd_vel(0.0, 0.0)
             return 0.0, 0.0
 
         elif self.motion.state in [self.motion.STATES['TO_WARD'], self.motion.STATES['TO_SECOND_WARD']]:
+            self.motion.publish_led(4)
             if self.motion.waiting_at_crossroad:
                 elapsed_time = time.time() - self.motion.enter_crossroad_time
                 if elapsed_time < self.motion.WAIT_AT_CROSSROAD_TIME:
@@ -446,20 +447,47 @@ class handle_logic:
                     if self.motion.line_lost_count > self.motion.MAX_LINE_LOST:
                         self.get_logger().info(f'到达病房 {self.motion.target_wards[self.motion.current_ward_index]}')
                         self.motion.state = self.motion.STATES['UNLOADING']
-                        self.motion.unload_start_time = time.time()
+                        self.motion.publish_led(2)
                         self.motion.line_lost_count = 0
+                        self.motion.publish_cmd_vel(0.0, 0.0)
+                        self.motion.mode =1
                         self.motion.publish_cmd_vel(0.0, 0.0)
                         return 0.0, 0.0
                     left_speed = right_speed = self.motion.BASE_SPEED
                 self.motion.publish_cmd_vel(left_speed, right_speed)
 
         elif self.motion.state == self.motion.STATES['UNLOADING']:
-            if time.time() - self.motion.unload_start_time >= self.motion.UNLOAD_TIME:
-                self.get_logger().info('卸载药品完成')
-                self.motion.state = self.motion.STATES['TURNING_AROUND']
-                self.motion.turn_around_start_time = time.time()
-                self.get_logger().info('开始180°掉头')
-            self.motion.publish_cmd_vel(0.0, 0.0)
+            if len(self.motion.target_wards) >1:
+                if self.motion.double_target==1 and self.motion.quality < 170:
+                    self.motion.double_target =2
+                    self.motion.mode = 2
+                    self.motion.publish_cmd_vel(0.0, 0.0)
+                    time.sleep(1)
+                    self.get_logger().info('病房1卸载药品完成')
+                    self.motion.state = self.motion.STATES['TURNING_AROUND']
+                    self.motion.turn_around_start_time = time.time()
+                    self.get_logger().info('开始180°掉头')
+                    self.motion.publish_led(4)
+                elif self.motion.double_target==2 and self.motion.quality < 70:
+                    self.motion.double_target =1
+                    self.motion.mode = 2
+                    self.motion.publish_cmd_vel(0.0, 0.0)
+                    time.sleep(1)
+                    self.get_logger().info('病房2卸载药品完成')
+                    self.motion.state = self.motion.STATES['TURNING_AROUND']
+                    self.motion.turn_around_start_time = time.time()
+                    self.get_logger().info('开始180°掉头')
+                    self.motion.publish_led(4)
+            else :
+                if self.motion.quality < 10:
+                    self.motion.mode = 2
+                    self.motion.publish_cmd_vel(0.0, 0.0)
+                    time.sleep(1)
+                    self.get_logger().info('卸载药品完成')
+                    self.motion.state = self.motion.STATES['TURNING_AROUND']
+                    self.motion.turn_around_start_time = time.time()
+                    self.get_logger().info('开始180°掉头')
+                    self.motion.publish_led(4)
 
         elif self.motion.state == self.motion.STATES['TURNING_AROUND']:
             if time.time() - self.motion.turn_around_start_time >= self.motion.TURN_AROUND_TIME:
@@ -514,13 +542,16 @@ class handle_logic:
                         self.motion.return_turn_index = 0
                         self.motion.current_crossroad_id = 0
                         self.motion.last_crossroad_id = 0
+                        self.motion.target_wards = []
                         #self.motion.publish_cmd_vel(0.0, 0.0)
                         self.motion.perform_turn_around()
                         time.sleep(1.1)
                         self.motion.publish_cmd_vel(0.0, 0.0)
+                        self.motion.mode = 1
+                        self.motion.publish_cmd_vel(0.0, 0.0)
+                        self.motion.publish_led(3)
                         self.motion.publish_reset()
                         self.get_logger().info('到达药房，停车')
-                        self.motion.mode = 1
                         return 0.0, 0.0
                     left_speed = right_speed = self.motion.BASE_SPEED
                 self.motion.publish_cmd_vel(left_speed, right_speed)

@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 import serial
-from std_msgs.msg import Float32MultiArray, Float32
+from std_msgs.msg import Float32MultiArray, Float32, Int8
 import time
 import re
 
@@ -14,7 +14,13 @@ class SerialNode(Node):
             baudrate=9600,
             timeout=1
         )
-
+        
+        self.led_sub = self.create_subscription(
+            Int8,
+            '/led',
+            self.led_callback,
+            10
+        )
         self.publisher_ = self.create_publisher(Float32, '/serial_mode', 10)
         self.cmd_vel_sub = self.create_subscription(
             Float32MultiArray,
@@ -26,6 +32,27 @@ class SerialNode(Node):
         self.flag = True
         self.timer = self.create_timer(0.1, self.read_serial)  # 每0.1秒读取串口
         #self.get_logger().info('Serial node started, listening for /cmd_vel messages...')
+
+    def led_callback(self, msg):
+        led_data = msg.data
+        if led_data != 4:
+            frame = bytearray([
+                    0xC7, 0xC8,
+                    0x00,led_data,
+                    0x5D
+                ])
+            self.get_logger().info(f"led: '{led_data}'")
+            
+            self.serial_port.write(frame)
+        else :
+            frame = bytearray([
+                    0xC7, 0xC8,
+                    0x00,0x00,
+                    0x5D
+                ])
+            #self.get_logger().info("led: '0'")
+            self.serial_port.write(frame)
+
 
     def read_serial(self):
         if self.serial_port is None or not self.serial_port.is_open:
@@ -41,17 +68,9 @@ class SerialNode(Node):
                 # 解析 "HX711 Get Weight = <float>" 格式
                 match = re.match(r'HX711 Get Weight = (\d+\.\d+)', data)
                 if match:
-                    try:
-                        float_value = float(match.group(1))
-                        self.publisher_.publish(Float32(data=float_value))
-                        #self.get_logger().info(f"Published weight to /serial_mode: {float_value}")
-                    except ValueError as e:
-                        self.get_logger().warn(f"Failed to convert '{match.group(1)}' to float: {e}")
-                else:
-                    self.get_logger().warn(f"Invalid data format: '{data}'")
-            else:
-                self.get_logger().debug("No serial data available")
-
+                    float_value = float(match.group(1))
+                    self.publisher_.publish(Float32(data=float_value))
+                    self.get_logger().info(f"Published weight to /serial_mode: {float_value}")
         except Exception as e:
             self.get_logger().error(f"Error reading serial: {e}")
 
