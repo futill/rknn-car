@@ -34,6 +34,7 @@ class CrossroadDetectorNode(Node):
         self.direction_pub = self.create_publisher(Int8MultiArray, '/ward_directions', 10)
         self.image_sub = self.create_subscription(Image, '/camera/image_raw', self.image_callback, 10)
         self.ward_sub = self.create_subscription(Int8MultiArray, '/target_wards', self.update_target_wards, 10)
+        self.reset = self.create_subscription(Int8, '/reset', self.update_reset, 10)
 
         # 初始化
         self.bridge = CvBridge()
@@ -44,6 +45,8 @@ class CrossroadDetectorNode(Node):
     def update_target_wards(self, msg):
         self.target_wards = list(msg.data)
         #self.get_logger().info(f'更新目标病房: {self.target_wards}')
+    def update_reset(self, msg):
+        self.reset = msg.data
 
     def process_red_line(self, image):
         h, w = image.shape[:2]
@@ -139,6 +142,14 @@ class CrossroadDetectorNode(Node):
         # 检测十字路口
         current_time = time.time()
         is_crossroad, left_detected, right_detected = self.detect_crossroad(frame)
+        if self.reset == 0:
+            self.crossroad_id = 0
+            self.last_crossroad_id = 0
+            self.last_crossroad_time = 0
+            self.detected_wards.clear()
+            self.pending_wards.clear()
+            self.get_logger().info('检测到重置信号，清空十字路口信息')
+            self.reset = 1
         if is_crossroad and (current_time - self.last_crossroad_time) > self.CROSSROAD_COOLDOWN:
             self.crossroad_id += 1
             self.last_crossroad_id = self.crossroad_id

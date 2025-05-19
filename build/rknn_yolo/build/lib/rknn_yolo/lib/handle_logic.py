@@ -6,31 +6,178 @@ class handle_logic:
         self.motion = node.motion  # 存储 motion_controller 实例
         self.pid = node.pid
 
+
     def get_logger(self):
         return self.node.get_logger()  # 使用节点的日志器
     
     def handle_crossroad_logic(self):
         self.motion.waiting_for_direction = False
-        if self.motion.current_crossroad_id in [1, 2] and self.motion.state in [self.motion.STATES['TO_WARD'], self.motion.STATES['RETURNING']]:
-            self.motion.forcing_straight = True
-            self.motion.straight_start_time = time.time()
-            self.get_logger().info(f'十字路口 {self.motion.current_crossroad_id} 不需要转弯，强制直行 {self.motion.STRAIGHT_WAIT_TIME} 秒')
-        elif self.motion.current_crossroad_id == 3:
-            self.handle_crossroad_3()
-        elif self.motion.current_crossroad_id == 4:
-            self.handle_crossroad_4()
-        elif self.motion.current_crossroad_id == 5:
-            self.handle_crossroad_5()
-        elif self.motion.current_crossroad_id == 6:
-            self.handle_crossroad_6()
-        elif self.motion.current_crossroad_id == 7:
-            self.handle_crossroad_7()
-        elif self.motion.current_crossroad_id == 8:
-            self.handle_crossroad_8()
-        elif self.motion.current_crossroad_id == 9:
-            self.handle_crossroad_9()
-        elif self.motion.current_crossroad_id in [10, 11]:
-            self.handle_crossroad_10_11()
+        if len(self.motion.target_wards) == 2 and (self.motion.target_wards[0]>=5 and self.motion.target_wards[0]<=8):
+            if self.motion.current_crossroad_id in [1, 2] and self.motion.state in [self.motion.STATES['TO_WARD'], self.motion.STATES['RETURNING']]:
+                self.motion.forcing_straight = True
+                self.motion.straight_start_time = time.time()
+                self.get_logger().info(f'十字路口 {self.motion.current_crossroad_id} 不需要转弯，强制直行 {self.motion.STRAIGHT_WAIT_TIME} 秒')
+            elif self.motion.current_crossroad_id == 3:
+                self.handle_crossroad_3()
+            elif self.motion.current_crossroad_id == 4:
+                self.handle_crossroad_4()
+            elif self.motion.current_crossroad_id == 5:
+                self.handle_crossroad_5()
+            elif self.motion.current_crossroad_id == 6:
+                self.handle_crossroad_6()
+            elif self.motion.current_crossroad_id == 7:
+                self.handle_crossroad_7()
+            elif self.motion.current_crossroad_id == 8:
+                self.handle_crossroad_8()
+            elif self.motion.current_crossroad_id == 9:
+                self.handle_crossroad_9()
+            elif self.motion.current_crossroad_id in [10, 11]:
+                self.handle_crossroad_10_11()
+        elif len(self.motion.target_wards) == 2 and (self.motion.target_wards[0]>=3 and self.motion.target_wards[0]<=4):
+            self.motion.waiting_for_direction = False
+            if self.motion.current_crossroad_id == 1:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+            elif self.motion.current_crossroad_id == 2:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    directions = self.motion.ward_directions.get(2, {})
+                    ward_list = list(directions.keys())
+                    if len(ward_list) > 0:
+                        self.motion.turn_direction = directions[ward_list[0]]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+                    self.motion.turn_history.append(self.motion.turn_direction)
+                    self.motion.crossroad_history.append((self.motion.current_crossroad_id, self.motion.turn_direction))
+            elif self.motion.current_crossroad_id == 3:
+                if self.motion.state == self.motion.STATES['TO_SECOND_WARD']:
+                    self.motion.turn_direction = self.motion.turn_history[0]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+            elif self.motion.current_crossroad_id == 4:
+                if self.motion.state == self.motion.STATES['TO_SECOND_WARD']:
+                    directions = self.motion.ward_directions.get(4, {})
+                    ward_list = list(directions.keys())
+                if len(ward_list) > 0:
+                    self.motion.turn_direction = directions[ward_list[0]]
+                self.motion.waiting_at_crossroad = True
+                self.motion.enter_crossroad_time = time.time()
+                self.motion.turn_history.append(self.motion.turn_direction)
+            elif self.motion.current_crossroad_id == 5:
+                if self.motion.state == self.motion.STATES['TO_SECOND_WARD']:
+                    directions = self.motion.ward_directions.get(5, {})
+                    ward_list = list(directions.keys())
+                if len(ward_list) > 0:
+                    self.motion.turn_direction = directions[ward_list[0]]
+                self.motion.waiting_at_crossroad = True
+                self.motion.enter_crossroad_time = time.time()
+                self.motion.turn_history.append(self.motion.turn_direction)
+            elif self.motion.current_crossroad_id == 6:
+                if self.motion.state == self.motion.STATES['RETURNING']:
+                    self.motion.turn_direction = -self.motion.turn_history[2]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+            elif self.motion.current_crossroad_id == 7:
+                if self.motion.state == self.motion.STATES['RETURNING']:
+                    self.motion.turn_direction = -self.motion.turn_history[1]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+            elif self.motion.current_crossroad_id == 8:
+                if self.motion.state == self.motion.STATES['RETURNING']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+            elif self.motion.current_crossroad_id == 9:
+                if self.motion.state == self.motion.STATES['RETURNING']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+
+
+
+
+
+
+        elif len(self.motion.target_wards) == 1 and (self.motion.target_wards[0]>=1 and self.motion.target_wards[0]<=2):
+            if self.motion.state == self.motion.STATES['TO_WARD']:
+                directions = self.motion.ward_directions.get(1, {})
+                ward_list = list(directions.keys())
+                if len(ward_list) > 0:
+                    self.motion.turn_direction = directions[ward_list[0]]
+                self.motion.waiting_at_crossroad = True
+                self.motion.enter_crossroad_time = time.time()
+                self.motion.turn_history.append(self.motion.turn_direction)
+                self.motion.crossroad_history.append((self.motion.current_crossroad_id, self.motion.turn_direction))
+            elif self.motion.state == self.motion.STATES['RETURNING']:
+                    directions = self.motion.ward_directions[1]
+                    self.motion.turn_direction = -self.motion.turn_history[0]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+
+        elif len(self.motion.target_wards) == 1 and (self.motion.target_wards[0]>=3 and self.motion.target_wards[0]<=4):
+            self.motion.waiting_for_direction = False
+            if self.motion.current_crossroad_id == 1:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+            elif self.motion.current_crossroad_id == 2:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    directions = self.motion.ward_directions.get(2, {})
+                    ward_list = list(directions.keys())
+                    if len(ward_list) > 0:
+                        self.motion.turn_direction = directions[ward_list[0]]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+                    self.motion.turn_history.append(self.motion.turn_direction)
+            elif self.motion.state == self.motion.STATES['RETURNING']:
+                if self.motion.current_crossroad_id == 3:
+                        self.motion.turn_direction = -self.motion.turn_history[0]
+                        self.motion.waiting_at_crossroad = True
+                if self.motion.current_crossroad_id == 4:
+                        self.motion.forcing_straight = True
+                        self.motion.straight_start_time = time.time()
+
+        elif len(self.motion.target_wards) == 1 and (self.motion.target_wards[0]>=5 and self.motion.target_wards[0]<=8):
+            self.motion.waiting_for_direction = False
+            if self.motion.current_crossroad_id == 1:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+            elif self.motion.current_crossroad_id == 2:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    self.motion.forcing_straight = True
+                    self.motion.straight_start_time = time.time()
+            elif self.motion.current_crossroad_id == 3:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    directions = self.motion.ward_directions.get(3, {})
+                    ward_list = list(directions.keys())
+                    if len(ward_list) > 0:
+                        self.motion.turn_direction = directions[ward_list[0]]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+                    self.motion.turn_history.append(self.motion.turn_direction)
+            elif self.motion.current_crossroad_id == 4:
+                if self.motion.state == self.motion.STATES['TO_WARD']:
+                    directions = self.motion.ward_directions.get(4, {})
+                    ward_list = list(directions.keys())
+                    if len(ward_list) > 0:
+                        self.motion.turn_direction = directions[ward_list[0]]
+                    self.motion.waiting_at_crossroad = True
+                    self.motion.enter_crossroad_time = time.time()
+                    self.motion.turn_history.append(self.motion.turn_direction)
+            elif self.motion.state == self.motion.STATES['RETURNING']:
+                if self.motion.current_crossroad_id == 5:
+                        self.motion.turn_direction = -self.motion.turn_history[1]
+                        self.motion.waiting_at_crossroad = True
+                if self.motion.current_crossroad_id == 6:
+                        self.motion.turn_direction = -self.motion.turn_history[0]
+                        self.motion.waiting_at_crossroad = True
+                if self.motion.current_crossroad_id == 7:
+                        self.motion.forcing_straight = True
+                        self.motion.straight_start_time = time.time()
+                if self.motion.current_crossroad_id == 8:
+                        self.motion.forcing_straight = True
+                        self.motion.straight_start_time = time.time()
+
+
 
     def handle_crossroad_3(self):
         if self.motion.state == self.motion.STATES['TO_WARD']:
@@ -367,8 +514,12 @@ class handle_logic:
                         self.motion.return_turn_index = 0
                         self.motion.current_crossroad_id = 0
                         self.motion.last_crossroad_id = 0
-                        self.get_logger().info('到达药房，停车')
+                        #self.motion.publish_cmd_vel(0.0, 0.0)
+                        self.motion.perform_turn_around()
+                        time.sleep(1.1)
                         self.motion.publish_cmd_vel(0.0, 0.0)
+                        self.motion.publish_reset()
+                        self.get_logger().info('到达药房，停车')
                         self.motion.mode = 1
                         return 0.0, 0.0
                     left_speed = right_speed = self.motion.BASE_SPEED

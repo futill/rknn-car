@@ -10,6 +10,7 @@ from rknn_yolo.lib.pid_controller import PIDController
 from rknn_yolo.lib.image_processor import process_image
 from rknn_yolo.lib.motion_controller import MotionController
 from rknn_yolo.lib.handle_logic import handle_logic
+
 class LineFollowingNode(Node):
     def __init__(self):
         super().__init__('line_following_node')
@@ -24,6 +25,7 @@ class LineFollowingNode(Node):
         self.mode_sub = self.create_subscription(Float32, '/serial_mode', self.motion.update_mode, 10)
         self.ward_sub = self.create_subscription(Int8MultiArray, '/target_wards', self.motion.update_target_wards, 10)
         self.cmd_vel_pub = self.create_publisher(Float32MultiArray, '/cmd_vel', 10)
+        self.reset = self.create_publisher(Int8, '/reset', 10)
 
         self.get_logger().info('线跟踪节点已启动')
 

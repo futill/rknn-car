@@ -1,5 +1,6 @@
 import time
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Int8
 
 class MotionController:
     def __init__(self, node):
@@ -75,7 +76,7 @@ class MotionController:
             direction = msg.data[3 + i*2]
             ward_directions[ward] = direction
         self.ward_directions[crossroad_id] = ward_directions
-        self.node.get_logger().info(f'收到病房方向信息: 十字路口 {crossroad_id}, 方向: {ward_directions}')
+        self.node.get_logger().info(f'收到病房方向信息: 十字路口 {crossroad_id}, 方向: {self.ward_directions}')
 
         if crossroad_id == 3 and len(self.target_wards) >= 2 and not self.wards_same_side:
             ward1, ward2 = self.target_wards[0], self.target_wards[1]
@@ -115,7 +116,7 @@ class MotionController:
             self.node.get_logger().info(f'开始送药，目标病房: {self.target_wards}')
 
     def perform_turn(self, line_center, pid_controller):
-        left_speed = right_speed = 0.0
+        #left_speed = right_speed = 0.0
         if not self.entered_crossroad:
             self.entered_crossroad = True
             self.node.get_logger().info('开始转向')
@@ -161,3 +162,8 @@ class MotionController:
         msg = Float32MultiArray()
         msg.data = [float(left_speed), float(right_speed), float(self.mode)]
         self.node.cmd_vel_pub.publish(msg)
+    
+    def publish_reset(self):
+        msg = Int8()
+        msg.data = 0
+        self.node.reset.publish(msg)
