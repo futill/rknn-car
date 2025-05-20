@@ -9,7 +9,7 @@ class WardPublisherNode(Node):
         # 初始化串口
         self.serial_port = serial.Serial(
             port='/dev/ttyS4',
-            baudrate=9600,
+            baudrate=115200,
             timeout=1
         )
         self.publisher_ = self.create_publisher(Int8MultiArray, '/target_wards', 10)
@@ -18,24 +18,37 @@ class WardPublisherNode(Node):
         self.get_logger().info('病房发布节点已启动')
 
     def read_and_publish_wards(self):
-        try:
             # 读取串口数据
-            if self.serial_port.in_waiting >= 4:  # 协议长度为 4 字节
-                data = self.serial_port.read(4)  # 读取 4 字节
+            if self.serial_port.in_waiting == 8:  # 协议长度为 4 字节
+                data = self.serial_port.read(8)  # 读取 4 字节
                 # 验证协议格式：aa 01 (病房号) bb
-                if len(data) == 4 and data[0] == 0xAA and data[1] == 0x02 and data[3] == 0xBB:
-                    ward_number = data[2]  # 提取病房号（第 3 字节）
-                    self.target_wards = [ward_number]  # 更新病房号列表
+                if len(data) == 8 and data[0] == 0xAA and data[1] == 0x02 and data[7] == 0xBB:
+                    ward_number_one = data[2]  # 提取病房号（第 3 字节）
+                    ward_number_double = data[6]
+                    self.target_wards = [ward_number_one,ward_number_double]  # 更新病房号列表
                     # 发布消息
                     msg = Int8MultiArray()
                     msg.data = [int(ward) for ward in self.target_wards]
                     self.publisher_.publish(msg)
-                    self.get_logger().info(f'发布病房号: {ward_number}')
+                    self.get_logger().info(f'发布病房号: {self.target_wards}')
                     data = []
                 else:
                     self.get_logger().warn('收到无效的串口数据')
-        except serial.SerialException as e:
-            self.get_logger().error(f'串口错误: {e}')
+            elif self.serial_port.in_waiting == 4:  # 协议长度为 4 字节
+                data = self.serial_port.read(4)  # 读取 4 字节
+                # 验证协议格式：aa 01 (病房号) bb
+                if len(data) == 4 and data[0] == 0xAA and data[1] == 0x01 and data[3] == 0xBB:
+                    ward_number_one = data[2]  # 提取病房号（第 3 字节）
+                    self.target_wards = [ward_number_one]  # 更新病房号列表
+                    # 发布消息
+                    msg = Int8MultiArray()
+                    msg.data = [int(ward) for ward in self.target_wards]
+                    self.publisher_.publish(msg)
+                    self.get_logger().info(f'发布病房号: {self.target_wards}')
+                    data = []
+                else:
+                    self.get_logger().warn('收到无效的串口数据')
+
 
 def main(args=None):
     rclpy.init(args=args)
